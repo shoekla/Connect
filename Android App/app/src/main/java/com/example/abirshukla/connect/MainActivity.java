@@ -22,13 +22,13 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv = (TextView) findViewById(R.id.textView);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("GivenFiles");
+        DatabaseReference myRef = database.getReference();
 
 
         Intent myIntent = new Intent(this, MyService.class);
@@ -42,45 +42,29 @@ public class MainActivity extends AppCompatActivity {
         alarmManager.set(AlarmManager.RTC_WAKEUP,
                 calendar.getTimeInMillis(), pendingIntent);
 
-        final Intent d = new Intent(MainActivity.this,ListForDownload.class);
-
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue().toString();
-                //System.out.println("Value: "+value);
+                String rVals = (String) dataSnapshot.child("RetrievedFiles").getValue().toString();
+                String value = (String) dataSnapshot.child("GivenFiles").getValue().toString();
                 value = value.substring(value.indexOf("=")+2,value.length()-2);
                 System.out.println("Value: "+value);
-
+                System.out.println("Val: "+rVals);
+                Intent d = new Intent(MainActivity.this,ListForDownload.class);
+                d.putExtra("rValues",rVals);
                 d.putExtra("values",value);
                 startActivity(d);
+
+
+
+
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                tv.setText("Error Occured");
-            }
-        });
-        myRef = database.getReference("RetrievedFiles");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue().toString();
+            public void onCancelled(DatabaseError databaseError) {
 
-                d.putExtra("rValues",value);
-                startActivity(d);
             }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                tv.setText("Error Occured");
-            }
         });
 
 

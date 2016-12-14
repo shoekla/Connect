@@ -32,6 +32,7 @@ public class MyService extends Service {
 
         handler.postDelayed(new Runnable() {
             public void run() {
+
                 final FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();
                 final String fValues = "";
@@ -43,10 +44,15 @@ public class MyService extends Service {
                         if (value != null && rVals != null) {
                             System.out.println("Abir: " + rVals + ", " + value);
                             value = value.substring(value.indexOf("=") + 2, value.length() - 2);
-
+                            String ar1 = "";
+                            String rAr = "";
+                            newR = "";
                             String rArray[] = rVals.split(",");
+
+                            System.out.print("Value rarr: ");
                             for (int i = 0; i < rArray.length; i++) {
                                 rArray[i] = rArray[i].trim();
+                                System.out.print(" "+rArray[i].trim());
                             }
                             for (int i = 0; i < rArray.length; i++) {
                                 try {
@@ -57,31 +63,25 @@ public class MyService extends Service {
                                 }
                             }
                             String array[] = value.split(",");
+                            System.out.print("\nValue arr: ");
                             for (int i = 0; i < array.length; i++) {
                                 //System.out.println("Array: "+array[i]);
                                 array[i] = array[i].trim();
+                                if (!contians(array[i],rArray)) {
+                                    downloadFileFromComputer(files.get(i));
+                                    newR = newR.substring(1);
+                                    System.out.println("NewR: " + newR);
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference myRef = database.getReference("RetrievedFiles");
+
+                                    myRef.setValue(newR);
+                                }
                                 //System.out.println("Array: "+array[i]);
                             }
-                            for (int i = 0; i < array.length; i++) {
-                                if (!rFiles.contains(array[i].substring(1, array[i].length() - 1))) {
-                                    files.add(array[i].substring(1, array[i].length() - 1));
-                                }
-                            }
-                            System.out.println("Abir: " + files.size());
-                            System.out.println("Abir: " + newR);
-                            if (files.size() > 0) {
-                                for (int i = 0; i < files.size(); i++) {
-                                    newR = newR + ",\"" + files.get(i) + "\"";
-                                    rFiles.add(files.get(i));
-                                    downloadFileFromComputer(files.get(i));
-                                }
-                                newR = newR.substring(1);
-                                System.out.println("NewR: " + newR);
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef = database.getReference("RetrievedFiles");
+                            System.out.println("\nValue newR: "+newR);
 
-                                myRef.setValue(newR);
-                            }
+
+
 
                         }
                     }
@@ -92,9 +92,14 @@ public class MyService extends Service {
                     }
 
                 });
+                handler.postDelayed(this, 5000);
+                /*
+                Toast.makeText(MyService.this, "Donwload Check", Toast.LENGTH_LONG).show();
+                System.out.println("Download Check");
                 handler.postDelayed(this, 2000);
+                */
             }
-        }, 2000);
+        }, 5000);
 
 
     }
@@ -133,6 +138,14 @@ public class MyService extends Service {
 
             }
         });
+    }
+    public static boolean contians(String s, String arr[]) {
+        for (int i = 0; i < arr.length;i++) {
+            if (arr[i].equals(s)) {
+                return true;
+            }
+        }
+        return false;
     }
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
