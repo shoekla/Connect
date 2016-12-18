@@ -2,13 +2,13 @@ package com.example.abirshukla.connect;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,14 +18,15 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView tv;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv = (TextView) findViewById(R.id.textView);
+        final ProgressDialog progress;
+        progress = ProgressDialog.show(this, "Loading",
+                "Pulling Files From Cloud", true);
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
@@ -50,9 +51,16 @@ public class MainActivity extends AppCompatActivity {
                 value = value.substring(value.indexOf("=")+2,value.length()-2);
                 System.out.println("Value: "+value);
                 System.out.println("Val: "+rVals);
+                String rValsN = rVals.replace("\"","'").replace(", ",",");
+                String valsN = value.replace("\"","'").replace(", ",",");
+                System.out.println("Val----------");
+                System.out.println("Value: r: "+rValsN);
+                System.out.println("Value: n: "+valsN);
+                System.out.println("Value Same?: "+rValsN.equals(valsN));
                 Intent d = new Intent(MainActivity.this,ListForDownload.class);
                 d.putExtra("rValues",rVals);
                 d.putExtra("values",value);
+                progress.dismiss();
                 startActivity(d);
 
 

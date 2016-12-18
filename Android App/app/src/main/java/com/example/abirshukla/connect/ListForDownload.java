@@ -93,7 +93,7 @@ public class ListForDownload extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("RetrievedFiles");
 
-        myRef.setValue(newR);
+        myRef.setValue(values);
 
 
     }

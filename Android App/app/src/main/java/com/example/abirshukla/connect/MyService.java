@@ -39,50 +39,45 @@ public class MyService extends Service {
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String rVals = (String) dataSnapshot.child("RetrievedFiles").getValue().toString();
-                        String value = (String) dataSnapshot.child("GivenFiles").getValue().toString();
-                        if (value != null && rVals != null) {
-                            System.out.println("Abir: " + rVals + ", " + value);
+                        try {
+                            String rVals = (String) dataSnapshot.child("RetrievedFiles").getValue().toString();
+                            String value = (String) dataSnapshot.child("GivenFiles").getValue().toString();
                             value = value.substring(value.indexOf("=") + 2, value.length() - 2);
-                            String ar1 = "";
-                            String rAr = "";
-                            newR = "";
-                            String rArray[] = rVals.split(",");
-
-                            System.out.print("Value rarr: ");
-                            for (int i = 0; i < rArray.length; i++) {
-                                rArray[i] = rArray[i].trim();
-                                System.out.print(" "+rArray[i].trim());
-                            }
-                            for (int i = 0; i < rArray.length; i++) {
-                                try {
-                                    newR = newR + ",\"" + rArray[i].substring(1, rArray[i].length() - 1) + "\"";
-                                    rFiles.add(rArray[i].substring(1, rArray[i].length() - 1));
-                                } catch (Exception e) {
-
+                            System.out.println("Value: " + value);
+                            System.out.println("Val: " + rVals);
+                            String rValsN = rVals.replace("\"", "'").replace(", ", ",");
+                            String valsN = value.replace("\"", "'").replace(", ", ",");
+                            if (!rValsN.equals(valsN)) {
+                                String array[] = value.split(",");
+                                String rArray[] = rVals.split(",");
+                                for (int i = 0; i < rArray.length; i++) {
+                                    rArray[i] = rArray[i].trim();
                                 }
-                            }
-                            String array[] = value.split(",");
-                            System.out.print("\nValue arr: ");
-                            for (int i = 0; i < array.length; i++) {
-                                //System.out.println("Array: "+array[i]);
-                                array[i] = array[i].trim();
-                                if (!contians(array[i],rArray)) {
-                                    downloadFileFromComputer(files.get(i));
-                                    newR = newR.substring(1);
-                                    System.out.println("NewR: " + newR);
-                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                    DatabaseReference myRef = database.getReference("RetrievedFiles");
+                                for (int i = 0; i < rArray.length; i++) {
+                                    try {
+                                        rFiles.add(rArray[i].substring(1, rArray[i].length() - 1));
+                                    } catch (Exception e) {
 
-                                    myRef.setValue(newR);
+                                    }
                                 }
-                                //System.out.println("Array: "+array[i]);
+                                for (int i = 0; i < array.length; i++) {
+                                    //System.out.println("Array: "+array[i]);
+                                    array[i] = array[i].trim();
+                                    //System.out.println("Array: "+array[i]);
+                                }
+                                for (int i = 0; i < array.length; i++) {
+                                    if (!rFiles.contains(array[i].substring(1, array[i].length() - 1))) {
+                                        downloadFileFromComputer(array[i].substring(1, array[i].length() - 1));
+                                    }
+                                }
+                                DatabaseReference myRef = database.getReference("RetrievedFiles");
+                                myRef.setValue(value);
+
+
                             }
-                            System.out.println("\nValue newR: "+newR);
-
-
-
-
+                        }
+                        catch (Exception e) {
+                            
                         }
                     }
 
@@ -93,11 +88,8 @@ public class MyService extends Service {
 
                 });
                 handler.postDelayed(this, 5000);
-                /*
-                Toast.makeText(MyService.this, "Donwload Check", Toast.LENGTH_LONG).show();
-                System.out.println("Download Check");
-                handler.postDelayed(this, 2000);
-                */
+
+
             }
         }, 5000);
 
