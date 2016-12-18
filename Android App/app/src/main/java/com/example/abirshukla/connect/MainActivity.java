@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         DatabaseReference myRef = database.getReference();
 
 
-        Intent myIntent = new Intent(this, MyService.class);
+        Intent myIntent = new Intent(this, DownloadService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,  0, myIntent, 0);
 
         Calendar calendar = Calendar.getInstance();
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         calendar.add(Calendar.SECOND, 2);
         alarmManager.set(AlarmManager.RTC_WAKEUP,
                 calendar.getTimeInMillis(), pendingIntent);
-
+        //loads all file names
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -23,12 +23,12 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
-public class MyService extends Service {
+public class DownloadService extends Service {
     String newR = "";
     ArrayList<String> files = new ArrayList<>();
     ArrayList<String> rFiles = new ArrayList<>();
     boolean check = true;
-    public MyService() {
+    public DownloadService() {
         final Handler handler = new Handler();
 
         handler.postDelayed(new Runnable() {
@@ -42,6 +42,7 @@ public class MyService extends Service {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         try {
                             if (check) {
+                                //Gets Files from cloud and puts them into string arrays
                                 String rVals = (String) dataSnapshot.child("RetrievedFiles").getValue().toString();
                                 String value = (String) dataSnapshot.child("GivenFiles").getValue().toString();
                                 value = value.substring(value.indexOf("=") + 2, value.length() - 2);
@@ -64,15 +65,15 @@ public class MyService extends Service {
                                         }
                                     }
                                     for (int i = 0; i < array.length; i++) {
-                                        //System.out.println("Array: "+array[i]);
                                         array[i] = array[i].trim();
-                                        //System.out.println("Array: "+array[i]);
                                     }
+                                    //downloads any new files
                                     for (int i = 0; i < array.length; i++) {
                                         if (!rFiles.contains(array[i].substring(1, array[i].length() - 1))) {
                                             downloadFileFromComputer(array[i].substring(1, array[i].length() - 1));
                                         }
                                     }
+                                    //updates file list
                                     DatabaseReference myRef = database.getReference("RetrievedFiles");
                                     myRef.setValue(value);
                                     check = true;

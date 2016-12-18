@@ -34,6 +34,7 @@ public class ListForDownload extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_for_download);
         Bundle vals = getIntent().getExtras();
+        //gets given and already retrived files and puts them into string arrays
         values = vals.getString("values");
         String array[] = values.split(",");
         String rVals = vals.getString("rValues");
@@ -51,33 +52,29 @@ public class ListForDownload extends AppCompatActivity {
             }
         }
         for (int i = 0; i < array.length;i++) {
-            //System.out.println("Array: "+array[i]);
             array[i] = array[i].trim();
-            //System.out.println("Array: "+array[i]);
         }
+        //filters newly added files to display
         for (int i = 0; i < array.length;i++) {
             if (!rFiles.contains(array[i].substring(1,array[i].length()-1))) {
                 files.add(array[i].substring(1, array[i].length() - 1));
             }
         }
 
-        //System.out.println("Array: "+getFileType(files.get(0)));
         ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_listview,files);
         ListView listView = (ListView) findViewById(R.id.listview1);
         listView.setAdapter(adapter);
-        //Toast.makeText(MainActivity.this, "Downloading",
-         //       Toast.LENGTH_LONG).show();
-    }
-    public String getFileType(String name) {
-        String type = name.substring(name.lastIndexOf(".")+1);
-        return type;
     }
     public void allFiles(View view) {
+        //Goes to activty that allows users to:
+        //A: Pick which files they want downloaded
+        //B: Download any old files that were already downloaded
         Intent a = new Intent(ListForDownload.this,AllFiles.class);
         a.putExtra("values",values);
         startActivity(a);
     }
     public void down (View view) {
+        //Actual Download Process of each New File
         if (files.size() == 0) {
             Toast.makeText(ListForDownload.this, "Nothing To Donwload", Toast.LENGTH_LONG).show();
             return;
@@ -98,9 +95,9 @@ public class ListForDownload extends AppCompatActivity {
 
     }
     public void downloadFileFromComputer(final String fileName) {
+        //Makes the file on users phone
         StorageReference mstorageRef;
         mstorageRef = FirebaseStorage.getInstance().getReference();
-        //StorageReference islandRef = mStorageRef.child("Kill Bill Vol. 2 OST - L'Arena - Ennio Morricone.mp3");
         mstorageRef.child(fileName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
