@@ -27,6 +27,7 @@ public class MyService extends Service {
     String newR = "";
     ArrayList<String> files = new ArrayList<>();
     ArrayList<String> rFiles = new ArrayList<>();
+    boolean check = true;
     public MyService() {
         final Handler handler = new Handler();
 
@@ -40,44 +41,47 @@ public class MyService extends Service {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         try {
-                            String rVals = (String) dataSnapshot.child("RetrievedFiles").getValue().toString();
-                            String value = (String) dataSnapshot.child("GivenFiles").getValue().toString();
-                            value = value.substring(value.indexOf("=") + 2, value.length() - 2);
-                            System.out.println("Value: " + value);
-                            System.out.println("Val: " + rVals);
-                            String rValsN = rVals.replace("\"", "'").replace(", ", ",");
-                            String valsN = value.replace("\"", "'").replace(", ", ",");
-                            if (!rValsN.equals(valsN)) {
-                                String array[] = value.split(",");
-                                String rArray[] = rVals.split(",");
-                                for (int i = 0; i < rArray.length; i++) {
-                                    rArray[i] = rArray[i].trim();
-                                }
-                                for (int i = 0; i < rArray.length; i++) {
-                                    try {
-                                        rFiles.add(rArray[i].substring(1, rArray[i].length() - 1));
-                                    } catch (Exception e) {
-
+                            if (check) {
+                                String rVals = (String) dataSnapshot.child("RetrievedFiles").getValue().toString();
+                                String value = (String) dataSnapshot.child("GivenFiles").getValue().toString();
+                                value = value.substring(value.indexOf("=") + 2, value.length() - 2);
+                                System.out.println("Value: " + value);
+                                System.out.println("Val: " + rVals);
+                                String rValsN = rVals.replace("\"", "'").replace(", ", ",");
+                                String valsN = value.replace("\"", "'").replace(", ", ",");
+                                if (!rValsN.equals(valsN)) {
+                                    check = false;
+                                    String array[] = value.split(",");
+                                    String rArray[] = rVals.split(",");
+                                    for (int i = 0; i < rArray.length; i++) {
+                                        rArray[i] = rArray[i].trim();
                                     }
-                                }
-                                for (int i = 0; i < array.length; i++) {
-                                    //System.out.println("Array: "+array[i]);
-                                    array[i] = array[i].trim();
-                                    //System.out.println("Array: "+array[i]);
-                                }
-                                for (int i = 0; i < array.length; i++) {
-                                    if (!rFiles.contains(array[i].substring(1, array[i].length() - 1))) {
-                                        downloadFileFromComputer(array[i].substring(1, array[i].length() - 1));
+                                    for (int i = 0; i < rArray.length; i++) {
+                                        try {
+                                            rFiles.add(rArray[i].substring(1, rArray[i].length() - 1));
+                                        } catch (Exception e) {
+
+                                        }
                                     }
+                                    for (int i = 0; i < array.length; i++) {
+                                        //System.out.println("Array: "+array[i]);
+                                        array[i] = array[i].trim();
+                                        //System.out.println("Array: "+array[i]);
+                                    }
+                                    for (int i = 0; i < array.length; i++) {
+                                        if (!rFiles.contains(array[i].substring(1, array[i].length() - 1))) {
+                                            downloadFileFromComputer(array[i].substring(1, array[i].length() - 1));
+                                        }
+                                    }
+                                    DatabaseReference myRef = database.getReference("RetrievedFiles");
+                                    myRef.setValue(value);
+                                    check = true;
+
                                 }
-                                DatabaseReference myRef = database.getReference("RetrievedFiles");
-                                myRef.setValue(value);
-
-
                             }
                         }
                         catch (Exception e) {
-                            
+
                         }
                     }
 
@@ -87,7 +91,6 @@ public class MyService extends Service {
                     }
 
                 });
-                handler.postDelayed(this, 5000);
 
 
             }

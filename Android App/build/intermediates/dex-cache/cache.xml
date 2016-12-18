@@ -106,7 +106,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
-        sha1="9a660f0246d63feee0fa8cc6fcfd4dd57fb3d0ba">
+        sha1="e1c39ba8acaf50796bf58b45b513236a57daa936">
         <dex dex="/Users/abirshukla/Connect/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_f9a0974a98f83785f294bb91b3bdd7becb2b2719/classes.dex" />
     </item>
     <item
@@ -124,7 +124,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
-        sha1="46640006dad73a622d2cccb6e1a3be14b4239f6a">
+        sha1="8e30b8ac3eab96a2d12fefd047a2f0b40791d41b">
         <dex dex="/Users/abirshukla/Connect/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_ce799a1c0fa6351e732bca9141353f8f4b401891/classes.dex" />
     </item>
     <item
