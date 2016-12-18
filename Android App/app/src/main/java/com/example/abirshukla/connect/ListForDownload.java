@@ -54,6 +54,7 @@ public class ListForDownload extends AppCompatActivity {
         for (int i = 0; i < array.length;i++) {
             array[i] = array[i].trim();
         }
+
         //filters newly added files to display
         for (int i = 0; i < array.length;i++) {
             if (!rFiles.contains(array[i].substring(1,array[i].length()-1))) {
