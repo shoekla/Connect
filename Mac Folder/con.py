@@ -27,10 +27,24 @@ except:
 	pass
 #print arr[1]
 storage = firebase.storage()
+hist = []
+already = str(db.child("History").get().val())
+try:
+	begin = already.find(', u"')+4 #gets retrieved files
+	end = -4
+	hist = eval(already[begin:end])
+except:
+	pass
 # as admin
 for s in sendFiles:
 	if s not in arr:
 		storage.child(s).put(s)
+
+for fileD in hist:
+	if fileD not in arr:
+		storage.child(str(fileD)).delete()
 db.child("GivenFiles").remove()
 db.child("GivenFiles").push(str(sendFiles))
 
+db.child("History").remove()
+db.child("History").push(str(sendFiles))
